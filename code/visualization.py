@@ -16,6 +16,32 @@ color_palette = ["#3a86ff", "#ff006e", "#8338ec"]
 
 # Wybieramy kolumny z max 3 unikalnymi wartościami (binarne i 3-wartościowe)
 bin_columns = [col for col in df.columns if df[col].nunique() <= 3]
+nonbin_columns = [col for col in df.columns if col not in bin_columns]
+print("Kolumny binarne i 3-wartościowe:", bin_columns)
+axes = df[nonbin_columns].hist(figsize=(12, 10), layout=(4, 4), color=color_palette[0], edgecolor='black', grid=False)
+
+
+for ax in axes.flatten():
+    ax.tick_params(axis='both', labelsize=8)
+
+plt.tight_layout()
+plt.show()
+# Wyświetlamy boxploty dla kolumn niebinarnych
+ax = (
+    df[nonbin_columns]
+    .plot(
+        kind="box",
+        subplots=True,
+        figsize=(12, 10),
+        layout=(5, 5),
+        color=color_palette[1],
+    )
+)
+
+plt.tight_layout()
+plt.show()
+
+
 print("Kolumny binarne i 3-wartościowe:", bin_columns)
 
 # Wykresy kołowe
