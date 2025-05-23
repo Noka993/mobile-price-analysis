@@ -58,3 +58,42 @@ def remove_outliers(df2):
     cleaned_df = df.dropna()
 
     return cleaned_df
+
+def general_statistics(df):
+    stat_cols = [col for col in df.columns if df[col].nunique() > 7]
+    num_cols = pd.DataFrame(
+        df, columns=stat_cols
+    )
+    statystyki = {
+        "Średnia": num_cols.mean(),
+        "Mediana": num_cols.median(),
+        "Minimum": num_cols.min(),
+        "Maksimum": num_cols.max(),
+        "Odchylenie Standardowe": num_cols.std(),
+        "Skośność": num_cols.skew(),
+    }
+    statystyki = pd.DataFrame(statystyki)
+
+    return statystyki
+
+def dataframe_to_latex_table(df, row_label='Zmienna'):
+    latex_str = []
+    latex_str.append(r'\begin{adjustbox}{valign=c, width=\textwidth}')
+    latex_str.append(r'\begin{tabular}{|' + 'r|' * (len(df.columns)+1) + '}')
+    latex_str.append(r'\hline')
+
+    # Add header row
+    headers = ['\\textbf{' + row_label + '}'] + ['\\textbf{' + str(col) + '}' for col in df.columns]
+    latex_str.append(' & '.join(headers) + r' \\')
+    latex_str.append(r'\hline')
+
+    # Add data rows
+    for index, row in df.iterrows():
+        row_items = [str(index).replace('_', r'\_')] + [f"{val:.2f}" if isinstance(val, (float, int)) else str(val) for val in row]
+        latex_str.append(' & '.join(row_items) + r' \\')
+
+    latex_str.append(r'\hline')
+    latex_str.append(r'\end{tabular}')
+    latex_str.append(r'\end{adjustbox}')
+
+    return '\n'.join(latex_str)
