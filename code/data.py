@@ -1,8 +1,10 @@
 import os
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import OneHotEncoder
+import seaborn as sns
+import matplotlib.pyplot as plt
 from transform import transform_mobile_data 
+
 def read_preprocessed_data(
     file_name="train.csv",
     outliers=True,
@@ -24,15 +26,6 @@ def read_preprocessed_data(
     y = df["price_range"]
     X = df.drop("price_range", axis=1)
 
-    # One-hot encoding cech jakościowych
-    # if onehot:
-    #     qualitative = ["blue", "dual_sim", "four_g", "three_g", "touch_screen", "wifi"]
-    #     encoder = OneHotEncoder(sparse=False, drop='if_binary')
-    #     encoded = encoder.fit_transform(X[qualitative])
-    #     encoded_df = pd.DataFrame(encoded, columns=encoder.get_feature_names_out(qualitative), index=X.index)
-    #     X = pd.concat([X.drop(columns=qualitative), encoded_df], axis=1)
-
-    # Skalowanie i logarytmowanie
     if scaling_method:
         X = transform_mobile_data(X, scaling_method=scaling_method, log_transform_cols=log_transform_cols)
 
@@ -40,7 +33,6 @@ def read_preprocessed_data(
 
 def outliers_statistics(df):
     outliers_count = []
-
     for col in df.columns:
         if df[col].dtypes in [float, int]:
             q1 = df[col].quantile(0.25)
@@ -50,14 +42,11 @@ def outliers_statistics(df):
             outliers_count.append(outliers.shape[0])
         else:
             outliers_count.append(0)
-
     outliers_percentage = [count / len(df) for count in outliers_count]
-
     outliers_df = pd.DataFrame(
         [outliers_count, outliers_percentage], columns=df.columns
     )
     outliers_df.index = ["Ilość wartości skrajnych", "Procent wartości skrajnych"]
-
     return outliers_df
 
 def remove_outliers(df2):
@@ -104,3 +93,32 @@ def dataframe_to_latex_table(df, row_label='Zmienna'):
     latex_str.append(r'\end{tabular}')
     latex_str.append(r'\end{adjustbox}')
     return '\n'.join(latex_str)
+
+def plot_correlation_matrix(df, figsize=(12,10), cmap="coolwarm"):
+    corr = df.corr()
+    plt.figure(figsize=figsize)
+    sns.heatmap(corr, annot=True, fmt=".2f", cmap=cmap, square=True, cbar=True)
+    plt.title("Macierz korelacji zmiennych")
+    plt.tight_layout()
+    plt.show()
+
+if __name__ == "__main__":
+    # Wczytanie danych
+    X, y = read_preprocessed_data(scaling_method='standard')
+
+    # Opis statystyczny danych
+    print("\n--- Statystyki ogólne ---")
+    stats = general_statistics(X)
+    print(stats)
+
+    print("\n--- Statystyki wartości skrajnych ---")
+    out_stats = outliers_statistics(pd.concat([X, y], axis=1))
+    print(out_stats)
+
+    # LaTeX tabela statystyk
+    latex_table = dataframe_to_latex_table(stats, row_label="Zmienna")
+    print("\n--- Tabela LaTeX ---")
+    print(latex_table)
+
+    # Macierz korelacji i wizualizacja
+    plot_correlation_matrix(X)
