@@ -7,7 +7,7 @@ from sklearn.datasets import make_classification
 from sklearn.tree import plot_tree
 import matplotlib.pyplot as plt
 from transform import transform_mobile_data
-X,y = read_preprocessed_data(std=True)
+X,y = read_preprocessed_data(scaling_method='standard')
 
 
 

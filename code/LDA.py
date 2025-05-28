@@ -9,7 +9,7 @@ from sklearn.inspection import DecisionBoundaryDisplay
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.model_selection import cross_val_score, LeaveOneOut,  StratifiedKFold
 from data import read_preprocessed_data,outliers_statistics
-X,Y= read_preprocessed_data(std=True)
+X,Y= read_preprocessed_data(scaling_method='standard')
 # 2. Podział danych na zbiór treningowy i testowy
 X_train, X_test, y_train, y_test = train_test_split(
     X, Y, test_size=0.3, random_state=42
