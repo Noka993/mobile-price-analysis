@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, f1_score, roc_auc_score
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
@@ -46,7 +46,7 @@ voting_clf = VotingClassifier(
 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 scores = cross_val_score(voting_clf, X, Y, cv=cv, scoring='accuracy')
 
-print("=== Wyniki walidacji krzyżowej ===")
+print("Wyniki walidacji krzyżowej")
 print(f"Średnia dokładność: {np.mean(scores):.4f} (+/- {np.std(scores):.4f})")
 print(f"Wyniki foldów: {scores}")
 
@@ -54,11 +54,21 @@ print(f"Wyniki foldów: {scores}")
 voting_clf.fit(X_train, y_train)
 y_pred = voting_clf.predict(X_test)
 
-print("\n=== Macierz pomyłek ===")
+print("\nMacierz pomyłek")
 print(confusion_matrix(y_test, y_pred))
 
-print("\n=== Raport klasyfikacji ===")
+print("\nRaport klasyfikacji")
 print(classification_report(y_test, y_pred))
 
-print("\n=== Dokładność ogólna ===")
+print("\nAccuracy score")
 print(accuracy_score(y_test, y_pred))
+
+f1 = f1_score(y_test, y_pred, average='macro')
+print(f"\nF1-score (macro): {f1:.4f}")
+
+# Obliczamy prawdopodobieństwa dla ROC AUC
+probs = voting_clf.predict_proba(X_test)
+
+# ROC AUC - wieloklasowe (one-vs-rest)
+auc = roc_auc_score(y_test, probs, multi_class='ovr')
+print(f"ROC AUC (ovr): {auc:.4f}")

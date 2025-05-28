@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, f1_score, roc_auc_score
 from sklearn.preprocessing import StandardScaler
 from sklearn.inspection import DecisionBoundaryDisplay
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
@@ -45,3 +45,13 @@ print(confusion_matrix(y_test, y_pred))
 print("\nRaport klasyfikacji:")
 print(classification_report(y_test, y_pred))
 print("\nDokładność:", accuracy_score(y_test, y_pred))
+
+f1 = f1_score(y_test, y_pred, average='macro')
+print(f"\nF1-score (macro): {f1:.4f}")
+
+# Obliczamy prawdopodobieństwa dla ROC AUC
+probs = lda.predict_proba(X_test)
+
+# ROC AUC - wieloklasowe (one-vs-rest)
+auc = roc_auc_score(y_test, probs, multi_class='ovr')
+print(f"ROC AUC (ovr): {auc:.4f}")

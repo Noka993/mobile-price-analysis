@@ -5,8 +5,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import make_classification
 from sklearn.tree import plot_tree
+from sklearn.metrics import f1_score, roc_auc_score
 import matplotlib.pyplot as plt
-from transform import transform_mobile_data
 X,y = read_preprocessed_data(scaling_method='standard')
 
 
@@ -19,7 +19,19 @@ clf.fit(train_X, train_y)
 
 predict_y = clf.predict(test_X)
 
-print(clf.score(test_X, test_y))
+print("Accuracy score: ", clf.score(test_X, test_y))
+
+# F1-score (macro średnia dla wieloklasowej klasyfikacji)
+f1 = f1_score(test_y, predict_y, average='macro')
+print("F1-score (macro):", f1)
+
+# Prawdopodobieństwa predykcji dla AUC
+probs = clf.predict_proba(test_X)
+
+# ROC AUC (one-vs-rest) dla wieloklasowego problemu
+auc = roc_auc_score(test_y, probs, multi_class='ovr')
+print("ROC AUC (ovr):", auc)
+
 
 '''
 best_tree = None
