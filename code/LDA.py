@@ -9,6 +9,8 @@ from sklearn.inspection import DecisionBoundaryDisplay
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.model_selection import cross_val_score, LeaveOneOut,  StratifiedKFold
 from data import read_preprocessed_data,outliers_statistics
+from model_visualisation import plot_lda_coefficients, plot_confusion_matrix
+
 X,Y= read_preprocessed_data(scaling_method='standard')
 # 2. Podział danych na zbiór treningowy i testowy
 X_train, X_test, y_train, y_test = train_test_split(
@@ -55,3 +57,7 @@ probs = lda.predict_proba(X_test)
 # ROC AUC - wieloklasowe (one-vs-rest)
 auc = roc_auc_score(y_test, probs, multi_class='ovr')
 print(f"ROC AUC (ovr): {auc:.4f}")
+
+plot_confusion_matrix(lda, X_test, y_test)
+
+plot_lda_coefficients(lda)

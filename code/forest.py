@@ -3,14 +3,12 @@ import numpy as np
 from data import read_preprocessed_data
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.datasets import make_classification
 from sklearn.tree import plot_tree
 from sklearn.metrics import f1_score, roc_auc_score
 import matplotlib.pyplot as plt
+from model_visualisation import plot_importances, plot_confusion_matrix
+
 X,y = read_preprocessed_data(scaling_method='standard')
-
-
-
 
 train_X, test_X, train_y, test_y = train_test_split(X, y, test_size=0.3, random_state=42)
 
@@ -32,8 +30,6 @@ probs = clf.predict_proba(test_X)
 auc = roc_auc_score(test_y, probs, multi_class='ovr')
 print("ROC AUC (ovr):", auc)
 
-
-'''
 best_tree = None
 best_score = 0
 
@@ -45,25 +41,18 @@ for i, tree in enumerate(clf.estimators_):
         best_index = i
 
 estimator = clf.estimators_[best_index] 
-'''
 
-estimator = clf.estimators_[0] 
+#estimator = clf.estimators_[0]
 plt.figure(figsize=(20, 10))
 plot_tree(estimator, 
-          feature_names=clf.feature_names_in_, 
-          class_names=[str(cls) for cls in clf.classes_], 
-          filled=True, 
-          max_depth=4,
-          impurity=False)
+        feature_names=clf.feature_names_in_, 
+        class_names=[str(cls) for cls in clf.classes_], 
+        filled=True, 
+        max_depth=5,
+        impurity=False)
+plt.savefig('plots/random_forest_tree.png', dpi=300, bbox_inches='tight')
 plt.show()
 
-importances = clf.feature_importances_
-features = clf.feature_names_in_
+plot_confusion_matrix(clf,test_X,test_y)
 
-forest_importances = pd.Series(importances, index=features)
-
-plt.figure(figsize=(10, 6))
-forest_importances.sort_values().plot(kind='barh')
-plt.title("Feature Importances")
-plt.tight_layout()
-plt.show()
+plot_importances(clf)

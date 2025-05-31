@@ -6,6 +6,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from xgboost import XGBClassifier
 from data import read_preprocessed_data
+from model_visualisation import plot_confusion_matrix
 
 # Opis modelu hybrydowego
 # Model hybrydowy wykorzystuje klasyfikator typu "VotingClassifier" oparty na głosowaniu miękkim (soft voting),
@@ -72,3 +73,5 @@ probs = voting_clf.predict_proba(X_test)
 # ROC AUC - wieloklasowe (one-vs-rest)
 auc = roc_auc_score(y_test, probs, multi_class='ovr')
 print(f"ROC AUC (ovr): {auc:.4f}")
+
+plot_confusion_matrix(voting_clf,X_test,y_test)
