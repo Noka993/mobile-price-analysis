@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import plot_tree
 from sklearn.metrics import f1_score, roc_auc_score
 import matplotlib.pyplot as plt
-from model_visualisation import plot_importances, plot_confusion_matrix
+from model_visualisation import plot_shap, plot_confusion_matrix
 
 X,y = read_preprocessed_data(scaling_method='standard')
 
@@ -55,4 +55,6 @@ plt.show()
 
 plot_confusion_matrix(clf,test_X,test_y)
 
-plot_importances(clf)
+# Tworzymy wykres SHAP pokazujący na ile dane zmienne wpłynęły na model 
+# (zakomentowane, ponieważ zajmnuje bardzo dużo czasu output jest w folderze plots)
+#plot_shap(clf, test_X, "random_forest")

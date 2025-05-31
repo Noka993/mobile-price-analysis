@@ -6,7 +6,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from xgboost import XGBClassifier
 from data import read_preprocessed_data
-from model_visualisation import plot_confusion_matrix
+from model_visualisation import plot_confusion_matrix, plot_shap
 
 # Opis modelu hybrydowego
 # Model hybrydowy wykorzystuje klasyfikator typu "VotingClassifier" oparty na głosowaniu miękkim (soft voting),
@@ -57,6 +57,7 @@ y_pred = voting_clf.predict(X_test)
 
 print("\nMacierz pomyłek")
 print(confusion_matrix(y_test, y_pred))
+plot_confusion_matrix(voting_clf,X_test,y_test)
 
 print("\nRaport klasyfikacji")
 print(classification_report(y_test, y_pred))
@@ -74,4 +75,6 @@ probs = voting_clf.predict_proba(X_test)
 auc = roc_auc_score(y_test, probs, multi_class='ovr')
 print(f"ROC AUC (ovr): {auc:.4f}")
 
-plot_confusion_matrix(voting_clf,X_test,y_test)
+# Tworzymy wykres SHAP pokazujący na ile dane zmienne wpłynęły na model 
+# (zakomentowane, ponieważ zajmnuje dużo czasu output jest w folderze plots)
+#plot_shap(voting_clf, X_test,"hybrid")

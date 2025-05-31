@@ -9,7 +9,7 @@ from sklearn.inspection import DecisionBoundaryDisplay
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.model_selection import cross_val_score, LeaveOneOut,  StratifiedKFold
 from data import read_preprocessed_data,outliers_statistics
-from model_visualisation import plot_lda_coefficients, plot_confusion_matrix
+from model_visualisation import plot_confusion_matrix, plot_shap
 
 X,Y= read_preprocessed_data(scaling_method='standard')
 # 2. Podział danych na zbiór treningowy i testowy
@@ -44,6 +44,7 @@ y_pred = lda.predict(X_test)
 #wstępna analiza
 print("Macierz pomyłek:")
 print(confusion_matrix(y_test, y_pred))
+plot_confusion_matrix(lda, X_test, y_test)
 print("\nRaport klasyfikacji:")
 print(classification_report(y_test, y_pred))
 print("\nDokładność:", accuracy_score(y_test, y_pred))
@@ -58,6 +59,6 @@ probs = lda.predict_proba(X_test)
 auc = roc_auc_score(y_test, probs, multi_class='ovr')
 print(f"ROC AUC (ovr): {auc:.4f}")
 
-plot_confusion_matrix(lda, X_test, y_test)
-
-plot_lda_coefficients(lda)
+# Tworzymy wykres SHAP pokazujący na ile dane zmienne wpłynęły na model 
+# (zakomentowane, ponieważ zajmnuje dużo czasu output jest w folderze plots)
+#plot_shap(lda, X_test, "LDA")

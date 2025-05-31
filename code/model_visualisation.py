@@ -4,7 +4,17 @@ import seaborn as sns
 from data import read_preprocessed_data
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
+import shap
 
+def plot_shap(model,X_test,name):
+    explainer = shap.Explainer(model.predict_proba, X_test)
+    shap_values = explainer(X_test)
+
+    shap.summary_plot(shap_values, X_test, show=False)
+    plt.savefig("plots/shap_summary_"+name+".png", bbox_inches='tight', dpi=300)
+    plt.close()
+
+'''
 def plot_importances(model):
     importances = model.feature_importances_
     features = model.feature_names_in_
@@ -29,6 +39,7 @@ def plot_lda_coefficients(model):
     plt.xlabel('Linear Discriminants')
     plt.tight_layout()
     plt.show()
+'''
 
 def plot_confusion_matrix(model, test_X, test_y):
     predict_y = model.predict(test_X)
