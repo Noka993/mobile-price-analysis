@@ -49,3 +49,4 @@ def plot_confusion_matrix(model, test_X, test_y):
                                 display_labels=cost_labels)
     disp.plot()
     plt.show()
+    plt.close()
