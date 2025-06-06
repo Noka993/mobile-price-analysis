@@ -15,34 +15,37 @@ print(df.head())
 color_palette = ["#3a86ff", "#ff006e", "#8338ec"]
 
 # Wybieramy kolumny z max 3 unikalnymi wartościami (binarne i 3-wartościowe)
-bin_columns = [col for col in df.columns if df[col].nunique() <= 3]
+bin_columns = [col for col in df.columns if df[col].nunique() <= 4]
 nonbin_columns = [col for col in df.columns if col not in bin_columns]
-print("Kolumny binarne i 3-wartościowe:", bin_columns)
-axes = df[nonbin_columns].hist(figsize=(12, 10), layout=(4, 4), color=color_palette[0], edgecolor='black', grid=False)
+print("Kolumny binarne i 3/4-wartościowe:", bin_columns)
+axes = df[nonbin_columns].hist(
+    figsize=(12, 10),
+    layout=(4, 4),
+    color=color_palette[0],
+    edgecolor="black",
+    grid=False,
+)
 
 
 for ax in axes.flatten():
-    ax.tick_params(axis='both', labelsize=8)
+    ax.tick_params(axis="both", labelsize=8)
 
 plt.tight_layout()
 plt.show()
 # Wyświetlamy boxploty dla kolumn niebinarnych
-ax = (
-    df[nonbin_columns]
-    .plot(
-        kind="box",
-        subplots=True,
-        figsize=(12, 10),
-        layout=(5, 5),
-        color=color_palette[1],
-    )
+ax = df[nonbin_columns].plot(
+    kind="box",
+    subplots=True,
+    figsize=(12, 10),
+    layout=(5, 5),
+    color=color_palette[1],
 )
 
 plt.tight_layout()
 plt.show()
 
 
-print("Kolumny binarne i 3-wartościowe:", bin_columns)
+print("Kolumny binarne i 3/4-wartościowe:", bin_columns)
 
 # Wykresy kołowe
 ax = (
@@ -52,11 +55,11 @@ ax = (
         kind="pie",
         subplots=True,
         figsize=(10, 8),
-        layout=(2, 3),
+        layout=(3, 3),
         colors=color_palette,
-        autopct=lambda p: f'{p:.1f}%' if p > 0 else '',
+        autopct=lambda p: f"{p:.1f}%" if p > 0 else "",
         startangle=90,
-        wedgeprops={'edgecolor': 'white'},
+        wedgeprops={"edgecolor": "white"},
         legend=False,
     )
 )
@@ -71,9 +74,9 @@ ax = (
         kind="bar",
         subplots=True,
         figsize=(10, 8),
-        layout=(2, 3),
+        layout=(3, 3),
         color=color_palette,
-        edgecolor='black',
+        edgecolor="black",
         legend=False,
     )
 )
