@@ -8,7 +8,7 @@ from sklearn.metrics import f1_score, roc_auc_score
 import matplotlib.pyplot as plt
 from model_visualisation import plot_shap, plot_confusion_matrix
 
-X,y = read_preprocessed_data(scaling_method='standard')
+X,y = read_preprocessed_data(scaling_method='minmax')
 
 train_X, test_X, train_y, test_y = train_test_split(X, y, test_size=0.3, random_state=42)
 
@@ -51,11 +51,11 @@ plot_tree(estimator,
         max_depth=3,
         impurity=False,
         label='root')
-plt.savefig('plots/random_forest_tree.png', dpi=300, bbox_inches='tight')
+plt.savefig('plots/random_forest_tree_minmax.png', dpi=300, bbox_inches='tight')
 plt.show()
 
 plot_confusion_matrix(clf,test_X,test_y)
 
 # Tworzymy wykres SHAP pokazujący na ile dane zmienne wpłynęły na model 
 # (zakomentowane, ponieważ zajmnuje bardzo dużo czasu output jest w folderze plots)
-#plot_shap(clf, test_X, "random_forest")
+#plot_shap(clf, test_X, "random_forest_minmax")
