@@ -34,7 +34,7 @@ def read_preprocessed_data(
 def outliers_statistics(df):
     outliers_count = []
     for col in df.columns:
-        if df[col].dtypes in [float, int]:
+        if (df[col].dtypes in [float, int]) and (df[col].nunique() > 5):
             q1 = df[col].quantile(0.25)
             q3 = df[col].quantile(0.75)
             IQR = q3 - q1
