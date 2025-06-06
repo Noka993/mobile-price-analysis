@@ -65,4 +65,4 @@ print(f"ROC AUC (ovr): {auc:.4f}")
 
 # Tworzymy wykres SHAP pokazujący na ile dane zmienne wpłynęły na model
 # (zakomentowane, ponieważ zajmnuje dużo czasu output jest w folderze plots)
-plot_shap(LogReg, X_test, "LogReg")
+#plot_shap(LogReg, X_test, "LogReg")
