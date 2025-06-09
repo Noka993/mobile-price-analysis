@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.calibration import label_binarize
 from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
 from sklearn.metrics import (
+    auc,
     classification_report,
     confusion_matrix,
     accuracy_score,
@@ -80,8 +81,8 @@ print(f"\nF1-score (macro): {f1:.4f}")
 probs = voting_clf.predict_proba(X_test)
 
 # ROC AUC - wieloklasowe (one-vs-rest)
-auc = roc_auc_score(y_test, probs, multi_class="ovr")
-print(f"ROC AUC (ovr): {auc:.4f}")
+roc_auc_over = roc_auc_score(y_test, probs, multi_class="ovr")
+print(f"ROC AUC (ovr): {roc_auc_over:.4f}")
 
 # Tworzymy wykres SHAP pokazujący na ile dane zmienne wpłynęły na model
 # (zakomentowane, ponieważ zajmnuje dużo czasu output jest w folderze plots)

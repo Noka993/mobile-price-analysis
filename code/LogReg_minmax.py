@@ -1,13 +1,22 @@
+from sklearn.calibration import label_binarize
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
 from sklearn.datasets import load_iris
 import numpy as np
 import pandas as pd
-from data import read_preprocessed_data,outliers_statistics
+from data import read_preprocessed_data, outliers_statistics
 
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, f1_score, roc_auc_score
-from sklearn.model_selection import cross_val_score, LeaveOneOut,  StratifiedKFold
+from sklearn.metrics import (
+    auc,
+    classification_report,
+    confusion_matrix,
+    accuracy_score,
+    f1_score,
+    roc_auc_score,
+    roc_curve,
+)
+from sklearn.model_selection import cross_val_score, LeaveOneOut, StratifiedKFold
 import matplotlib.pyplot as plt
 
 from model_visualisation import plot_confusion_matrix, plot_shap
@@ -60,9 +69,42 @@ print(f"\nF1-score (macro): {f1:.4f}")
 probs = LogReg.predict_proba(X_test)
 
 # ROC AUC - wieloklasowe (one-vs-rest)
-auc = roc_auc_score(y_test, probs, multi_class='ovr')
-print(f"ROC AUC (ovr): {auc:.4f}")
+roc_auc_over = roc_auc_score(y_test, probs, multi_class="ovr")
+print(f"ROC AUC (ovr): {roc_auc_over:.4f}")
 
 # Tworzymy wykres SHAP pokazujący na ile dane zmienne wpłynęły na model
 # (zakomentowane, ponieważ zajmnuje dużo czasu output jest w folderze plots)
 #plot_shap(LogReg, X_test, "LogReg_minmax")
+
+n_classes = 4
+y_test_bin = label_binarize(y_test, classes=np.arange(n_classes))
+
+fpr = dict()
+tpr = dict()
+roc_auc = dict()
+
+for i in range(n_classes):
+    fpr[i], tpr[i], _ = roc_curve(y_test_bin[:, i], probs[:, i])
+    roc_auc[i] = auc(fpr[i], tpr[i])
+
+plt.figure(figsize=(8, 6))
+colors = ["blue", "green", "orange", "red"]
+for i in range(n_classes):
+    plt.plot(
+        fpr[i],
+        tpr[i],
+        color=colors[i],
+        lw=2,
+        label=f"Klasa {i} (AUC = {roc_auc[i]:.2f})",
+    )
+
+plt.plot([0, 1], [0, 1], "k--", lw=1)
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate")
+plt.title("Krzywe ROC – VotingClassifier (One-vs-Rest)")
+plt.legend(loc="lower right")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
